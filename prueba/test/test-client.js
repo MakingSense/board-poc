@@ -1,20 +1,16 @@
 "use strict";
 var server = require("../server/testServer");
-var clientApplication = require("../common/client-app");
-var ko_view_model_1 = require("../koclient/ko-view-model");
+var BoardService_1 = require("../server/BoardService");
 var io = require("socket.io-client");
 var options = {
     transports: ["websocket"],
     "force new connection": true
 };
 describe("Server Tests", function () {
-    var board;
-    var lServer;
-    var clientApp;
-    beforeEach(function () {
-        board = new ko_view_model_1.BoardVM();
-        lServer = server;
-        clientApplication.start(board);
+    it("A client connect to the board server, it's recive the board", function (done) {
+        var board = new BoardService_1.BoardService();
+        board.sendToClient = function () {
+        };
     });
     it("Client stablish a connection and recibe the board", function (done) {
         var aux = server;

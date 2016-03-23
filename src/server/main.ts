@@ -28,10 +28,15 @@ var boardService: BoardService = new BoardService();
 app.get("/", function(req, res){
   // TODO: add a new index page to allow to select client implementation
   // res.sendFile(__dirname + "/../client/index.html");
-  res.redirect("/koclient.html");
+  res.redirect("/koclient.html");{}
 });
 
-io.on("connection",  boardService.onClientConnection);
+io.on("connection",  (socket) => {
+  var result = boardService.onClientConnection();
+  socket.emit("board", result);
+  socket.on("board", boardService.onClientMessage);
+});
+
 boardService.sendToClient = (changes) => {
   io.emit("board", { patch: changes });
 };

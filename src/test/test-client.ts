@@ -15,15 +15,12 @@ var options = {
 };
 
 describe("Server Tests", function(){
+  it("A client connect to the board server, it's recive the board", function(done){
+    var board: BoardService = new BoardService();
 
-  var board: BoardVM;
-  var lServer;
-  var clientApp;
+    board.sendToClient = () => {
 
-  beforeEach(function(){
-    board = new BoardVM();
-    lServer = server;
-    clientApplication.start(board);
+    };
   });
 
   // it("While client make changes, server doesn't resend information", function(done){

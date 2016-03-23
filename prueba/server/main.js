@@ -13,8 +13,13 @@ var current = utils.clone(shadow);
 var boardService = new BoardService_1.BoardService();
 app.get("/", function (req, res) {
     res.redirect("/koclient.html");
+    { }
 });
-io.on("connection", boardService.onClientConnection);
+io.on("connection", function (socket) {
+    var result = boardService.onClientConnection();
+    socket.emit("board", result);
+    socket.on("board", boardService.onClientMessage);
+});
 boardService.sendToClient = function (changes) {
     io.emit("board", { patch: changes });
 };

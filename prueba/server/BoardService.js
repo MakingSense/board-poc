@@ -4,10 +4,9 @@ var utils = require("../common/utils");
 var BoardService = (function () {
     function BoardService() {
         var _this = this;
-        this.onClientConnection = function (socket) {
+        this.onClientConnection = function () {
             console.log("new connection");
-            socket.emit("board", { board: _this.shadow });
-            socket.on("board", _this.onClientMessage);
+            return { board: _this.shadow };
         };
         this.onClientMessage = function (msg) {
             var patch = msg.patch;

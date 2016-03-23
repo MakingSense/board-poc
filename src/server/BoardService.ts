@@ -14,10 +14,9 @@ export class BoardService {
   }
 
 
-  onClientConnection = (socket) => {
+  onClientConnection = () => {
     console.log("new connection");
-    socket.emit( "board", { board: this.shadow } );
-    socket.on("board", this.onClientMessage);
+    return { board: this.shadow };
   };
 
   onClientMessage = (msg: model.Message) => {
