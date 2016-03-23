@@ -25,8 +25,7 @@ export function start(boardVM: IBoardVM, config?: AppConfiguration) {
   return app;
 }
 
-class App {
-  shadowServer: model.Board = { };
+export class App {
   shadowClient: model.Board = { };
   boardVM: IBoardVM;
   socket: SocketIOClient.Socket;
@@ -39,18 +38,14 @@ class App {
 
   applyServerPatch(serverChanges: model.Patch) {
     var current = this.boardVM.toPlain();
-    var myChanges = rfc6902.createPatch(this.shadowClient, current);
-    // I am clonnig patch because the created objects has the same reference
-    rfc6902.applyPatch(this.shadowServer, utils.clone(serverChanges));
-    rfc6902.applyPatch(current, serverChanges);
-    rfc6902.applyPatch(current, myChanges);
+    rfc6902.applyPatch(current, utils.clone(serverChanges));
+    rfc6902.applyPatch(this.shadowClient, utils.clone(serverChanges));
     this.boardVM.update(current);
-    this.shadowClient = this.boardVM.toPlain();
   }
 
   initializateShadowServer = (board: model.Board) => {
-    this.shadowServer = board;
-    this.boardVM.update(this.shadowServer);
+    this.shadowClient = board;
+    this.boardVM.update(this.shadowClient);
   };
 
   onMessage = (msg: model.Message) => {
@@ -65,17 +60,16 @@ class App {
 
   onInterval= () => {
     var current = this.boardVM.toPlain();
-    var myChanges = rfc6902.createPatch(this.shadowServer, current);
+    var myChanges = rfc6902.createPatch(this.shadowClient, current);
     if (myChanges.length) {
       // TODO: consider to send it using HTTP in place of Socket
+      this.shadowClient = current;
       this.socket.emit(this.config.socketEventName, { patch: myChanges });
     }
   };
 
   start() {
-    this.boardVM.update(this.shadowServer);
     this.boardVM.applyBindings(this.config.rootNode);
-    this.shadowClient = this.boardVM.toPlain();
     this.socket = io();
     this.socket.on(this.config.socketEventName, this.onMessage);
     setInterval(this.onInterval, this.config.throttlingInterval);
