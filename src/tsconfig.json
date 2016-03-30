@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": "../prueba",
+    "preserveConstEnums": true,
+    "removeComments": true
+  },
+  "compileOnSave": false,
+  "filesGlob": [
+    "**/*.ts"
+  ],
+  "atom": {
+    "rewriteTsconfig": true
+  },
+  "files": [
+    "_tsd.d.ts",
+    "common/client-app.ts",
+    "common/model.ts",
+    "common/utils.ts",
+    "common/view-model.ts",
+    "custom-typings/defaults.d.ts",
+    "custom-typings/jquery-jeditable.d.ts",
+    "koclient/ko-main.ts",
+    "koclient/ko-view-model.ts",
+    "koclient/kobindings/dragndrop.ts",
+    "koclient/kobindings/jeditable.ts",
+    "server/BoardService.ts",
+    "server/main.ts",
+    "test/test-board-service.ts"
+  ]
+}

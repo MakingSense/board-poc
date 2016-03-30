@@ -5,6 +5,8 @@
 
 import * as rfc6902 from "rfc6902";
 import * as express from "express";
+import {BoardService} from "./BoardService";
+
 var app = express();
 app.use(express.static(__dirname + "/../../client"));
 
@@ -18,8 +20,10 @@ import * as utils from "../common/utils";
 import * as model from "../common/model";
 
 var shadow : model.Board = { };
-
 var current : model.Board = utils.clone(shadow);
+
+var boardService: BoardService = new BoardService();
+
 
 app.get("/", function(req, res){
   // TODO: add a new index page to allow to select client implementation
@@ -27,34 +31,21 @@ app.get("/", function(req, res){
   res.redirect("/koclient.html");
 });
 
-io.on("connection", function(socket){
-  console.log("connection");
-
-  // Send to client the board
-  socket.emit( "board", { board: shadow } );
-
-  socket.on("board", function(msg: model.Message) {
-    var board = (<model.BoardMessage>msg).board;
-    var patch = (<model.PatchMessage>msg).patch;
-    if (board) {
-      // TODO: do something
-    } else if (patch) {
-      var output = rfc6902.applyPatch(current, patch);
-    }
-  });
+io.on("connection",  (socket) => {
+  var result = boardService.onClientConnection();
+  socket.emit("board", result);
+  socket.on("board", boardService.onClientMessage);
 });
 
+boardService.sendToClient = (changes) => {
+  io.emit("board", { patch: changes });
+};
+
 var interval = 1000;
-setInterval(function() {
-  // I am clonnig patch because the created objects has the same reference
-  var changes = utils.clone(rfc6902.createPatch(shadow, current));
-  if (changes.length) {
-    rfc6902.applyPatch(shadow, changes);
-    io.emit("board", { patch: changes });
-  }
-}, interval);
+setInterval(boardService.onTic, interval);
 
 
-http.listen(process.env.PORT || 3000, function(){
+
+exports.server = http.listen(process.env.PORT || 3000, function(){
   console.log("listening on *:3000");
 });

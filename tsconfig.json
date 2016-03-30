@@ -6,5 +6,23 @@
   },
   "filesGlob": [
     "src/**/*.ts"
-  ]
+  ],
+  "files": [
+    "src/_tsd.d.ts",
+    "src/common/client-app.ts",
+    "src/common/model.ts",
+    "src/common/utils.ts",
+    "src/common/view-model.ts",
+    "src/custom-typings/defaults.d.ts",
+    "src/custom-typings/jquery-jeditable.d.ts",
+    "src/koclient/ko-main.ts",
+    "src/koclient/ko-view-model.ts",
+    "src/koclient/kobindings/dragndrop.ts",
+    "src/koclient/kobindings/jeditable.ts",
+    "src/server/main.ts",
+    "src/test/test-client.ts"
+  ],
+  "atom": {
+    "rewriteTsconfig": true
+  }
 }
