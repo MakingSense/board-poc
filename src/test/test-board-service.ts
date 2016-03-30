@@ -19,10 +19,10 @@ describe("Test Board Service", function(){
 
   it("On a change on the board sended to server, the change is saved on Server board", function(){
     // Arrange
-    var board:model.Board = {name: 'old Name'};
+    var board: model.Board = {name: "old Name"};
     var boardService = new BoardService(board);
     var newName = "New Name";
-    var change:model.PatchMessage = { patch: [{op: 'replace', path:'/name' , value:newName}]};
+    var change: model.PatchMessage = {patch: [{op: "replace", path: "/name", value: newName}]};
 
     // Act
     boardService.onClientMessage(change);

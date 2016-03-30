@@ -6,6 +6,7 @@
     "preserveConstEnums": true,
     "removeComments": true
   },
+  "compileOnSave": false,
   "filesGlob": [
     "**/*.ts"
   ],
@@ -26,8 +27,6 @@
     "koclient/kobindings/jeditable.ts",
     "server/BoardService.ts",
     "server/main.ts",
-    "server/testServer.ts",
-    "test/test-board-service.ts",
-    "test/test-client.ts"
+    "test/test-board-service.ts"
   ]
 }
