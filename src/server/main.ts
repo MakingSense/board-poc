@@ -28,7 +28,7 @@ var boardService: BoardService = new BoardService();
 app.get("/", function(req, res){
   // TODO: add a new index page to allow to select client implementation
   // res.sendFile(__dirname + "/../client/index.html");
-  res.redirect("/koclient.html");{}
+  res.redirect("/koclient.html");
 });
 
 io.on("connection",  (socket) => {
@@ -42,7 +42,7 @@ boardService.sendToClient = (changes) => {
 };
 
 var interval = 1000;
-setInterval(boardService.updateClients, interval);
+setInterval(boardService.onTic, interval);
 
 
 

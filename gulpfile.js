@@ -43,7 +43,7 @@ gulp.task('build', 'Compiles all TypeScript source files and updates module refe
   gulpSequence('tslint', [ '_build_server', '_build_koclient' ]));
 
 gulp.task('test', function(){
-  gulp.src("prueba/test/test-client.js")
+  gulp.src("prueba/test/*.js")
   .pipe(jasmine({
     verbose: true
   }));
@@ -58,6 +58,5 @@ gulp.task('build-test', function(cb){
 });
 
 gulp.task('watch-test', function(){
-
   gulp.watch('src/**/*.ts', gulpSequence('build-test','test'));
 });

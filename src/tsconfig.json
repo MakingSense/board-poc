@@ -27,6 +27,7 @@
     "server/BoardService.ts",
     "server/main.ts",
     "server/testServer.ts",
+    "test/test-board-service.ts",
     "test/test-client.ts"
   ]
 }

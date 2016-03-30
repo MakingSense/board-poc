@@ -8,25 +8,24 @@ export class BoardService {
   private shadow : model.Board;
   private current : model.Board;
 
-  constructor() {
-    this.shadow = {};
-    this.current =  utils.clone(this.shadow);
+  constructor(boardModel?: model.Board) {
+    this.current = boardModel || {};
+    this.shadow = utils.clone(this.current);
   }
 
-
   onClientConnection = () => {
-    console.log("new connection");
     return { board: this.shadow };
   };
 
   onClientMessage = (msg: model.Message) => {
     var patch = (<model.PatchMessage>msg).patch;
+
     if (patch) {
       rfc6902.applyPatch(this.current, patch);
     }
   };
 
-  updateClients = () => {
+  onTic = () => {
     var changes = utils.clone(rfc6902.createPatch(this.shadow, this.current));
     if (changes.length) {
       rfc6902.applyPatch(this.shadow, changes);
