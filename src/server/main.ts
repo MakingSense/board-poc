@@ -28,7 +28,7 @@ app.get("/", function(req, res){
 io.on("connection", function(socket){
   console.log("connection");
 
-  socket.emit( "board", boardService.onClientConnection );
+  socket.emit( "board", boardService.onClientConnection() );
 
   socket.on("board", boardService.onClientMessage);
 });
