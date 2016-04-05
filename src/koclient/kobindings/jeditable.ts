@@ -1,4 +1,5 @@
 /// <reference path="../../custom-typings/jquery-jeditable.d.ts" />
+import ko = require("knockout");
 var a : Dictionary<string>;
 export function register() {
   ko.bindingHandlers["jeditable"] = {

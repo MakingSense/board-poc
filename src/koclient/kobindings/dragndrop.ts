@@ -1,3 +1,4 @@
+import ko = require("knockout");
 export function register() {
   var _dragged: any;
   var _xFix: number;
