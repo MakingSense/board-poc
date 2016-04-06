@@ -20,44 +20,50 @@ export var defaultConfiguration: AppConfiguration = {
 };
 
 export function start(boardVM: IBoardVM, config?: AppConfiguration) {
-  var app = new App(boardVM, config);
-  app.start();
+  var app = new App(boardVM);
+  config = utils.extend({ }, defaultConfiguration, config);
+  boardVM.applyBindings(config.rootNode);
+  var socket = io();
+  socket.on(config.socketEventName, app.onMessage);
+
+  app.sendToServer = (changes) => {
+      socket.emit(config.socketEventName, { patch: changes });
+  };
+  setInterval(app.onInterval, config.throttlingInterval);
   return app;
 }
 
-class App {
-  shadowServer: model.Board = { };
-  shadowClient: model.Board = { };
+export class App {
+  shadow: model.Board = { };
   boardVM: IBoardVM;
-  socket: SocketIOClient.Socket;
-  config: AppConfiguration;
+  sendToServer: (changes: any) => void;
 
-  constructor(boardVM: IBoardVM, config?: AppConfiguration) {
+  constructor(boardVM: IBoardVM) {
     this.boardVM = boardVM;
-    this.config = utils.extend({ }, defaultConfiguration, config);
+    this.shadow = this.boardVM.toPlain();
   }
 
   applyServerPatch(serverChanges: model.Patch) {
     var current = this.boardVM.toPlain();
-    var myChanges = rfc6902.createPatch(this.shadowClient, current);
+    var myChanges = rfc6902.createPatch(this.shadow, current);
     // I am clonnig patch because the created objects has the same reference
-    rfc6902.applyPatch(this.shadowServer, utils.clone(serverChanges));
+    rfc6902.applyPatch(this.shadow, utils.clone(serverChanges));
     rfc6902.applyPatch(current, serverChanges);
     rfc6902.applyPatch(current, myChanges);
     this.boardVM.update(current);
-    this.shadowClient = this.boardVM.toPlain();
+    this.shadow = this.boardVM.toPlain();
   }
 
-  initializateShadowServer = (board: model.Board) => {
-    this.shadowServer = board;
-    this.boardVM.update(this.shadowServer);
+  initializateShadow = (board: model.Board) => {
+    this.shadow = board;
+    this.boardVM.update(this.shadow);
   };
 
   onMessage = (msg: model.Message) => {
     var board = (<model.BoardMessage>msg).board;
     var patch = (<model.PatchMessage>msg).patch;
     if (board) {
-      this.initializateShadowServer(board);
+      this.initializateShadow(board);
     } else if (patch) {
       this.applyServerPatch(patch);
     }
@@ -65,19 +71,12 @@ class App {
 
   onInterval= () => {
     var current = this.boardVM.toPlain();
-    var myChanges = rfc6902.createPatch(this.shadowServer, current);
+    var myChanges = rfc6902.createPatch(this.shadow, current);
     if (myChanges.length) {
-      // TODO: consider to send it using HTTP in place of Socket
-      this.socket.emit(this.config.socketEventName, { patch: myChanges });
+      this.sendToServer(myChanges);
     }
   };
 
-  start() {
-    this.boardVM.update(this.shadowServer);
-    this.boardVM.applyBindings(this.config.rootNode);
-    this.shadowClient = this.boardVM.toPlain();
-    this.socket = io();
-    this.socket.on(this.config.socketEventName, this.onMessage);
-    setInterval(this.onInterval, this.config.throttlingInterval);
-  }
+
+
 }

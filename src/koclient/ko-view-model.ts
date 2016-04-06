@@ -2,6 +2,8 @@ import * as utils from "../common/utils";
 import { Note, Board } from "../common/model";
 import { IBoardVM } from "../common/view-model";
 
+import ko = require("knockout");
+
 export interface NoteStyle {
   top: string;
   left: string;
