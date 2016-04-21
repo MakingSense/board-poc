@@ -1,5 +1,5 @@
 {
-  "compileOnSave": false,
+"compileOnSave": false,
   "compilerOptions": {
     "module": "commonjs",
     "moduleResolution": "node",
@@ -12,9 +12,6 @@
     "**/*.ts"
   ],
   "atom": {
-    "rewriteTsconfig": true
-  },
-  "files": [
-    "test-board-service.ts"
-  ]
+    "rewriteTsconfig": false
+  }
 }
