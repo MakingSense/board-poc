@@ -45,11 +45,9 @@ export class App {
 
   applyServerPatch(serverChanges: model.Patch) {
     var current = this.boardVM.toPlain();
-    var myChanges = rfc6902.createPatch(this.shadow, current);
     // I am clonnig patch because the created objects has the same reference
     rfc6902.applyPatch(this.shadow, utils.clone(serverChanges));
     rfc6902.applyPatch(current, serverChanges);
-    rfc6902.applyPatch(current, myChanges);
     this.boardVM.update(current);
     this.shadow = this.boardVM.toPlain();
   }
