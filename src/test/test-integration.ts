@@ -30,7 +30,7 @@ class ServerMock {
     client.sendToServer = (changes) => {
       this._boardService.onClientMessage({patch: changes});
     };
-    client.onMessage(this._boardService.onClientConnection());
+    client.onMessage(utils.clone(this._boardService.onClientConnection()));
     this._clients.push(client);
   };
 }
