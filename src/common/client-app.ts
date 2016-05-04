@@ -35,6 +35,7 @@ export function start(boardVM: IBoardVM, config?: AppConfiguration) {
 
 export class App {
   shadow: model.Board = { };
+  severShadow: model.Board = { };
   boardVM: IBoardVM;
   sendToServer: (changes: any) => void;
 
@@ -45,16 +46,20 @@ export class App {
 
   applyServerPatch(serverChanges: model.Patch) {
     var current = this.boardVM.toPlain();
+    rfc6902.applyPatch(this.severShadow, utils.clone(serverChanges));
+    var shadowDifferences = rfc6902.createPatch(this.shadow, this.severShadow);
     // I am clonnig patch because the created objects has the same reference
-    rfc6902.applyPatch(this.shadow, utils.clone(serverChanges));
-    rfc6902.applyPatch(current, serverChanges);
+    rfc6902.applyPatch(this.shadow, utils.clone(shadowDifferences));
+    rfc6902.applyPatch(current, utils.clone(shadowDifferences));
     this.boardVM.update(current);
     this.shadow = this.boardVM.toPlain();
   }
 
   initializateShadow = (board: model.Board) => {
     this.shadow = board;
+    this.severShadow = utils.clone(this.shadow);
     this.boardVM.update(this.shadow);
+
   };
 
   onMessage = (msg: model.Message) => {
@@ -71,6 +76,7 @@ export class App {
     var current = this.boardVM.toPlain();
     var myChanges = rfc6902.createPatch(this.shadow, current);
     if (myChanges.length) {
+      rfc6902.applyPatch(this.shadow, myChanges);
       this.sendToServer(myChanges);
     }
   };
