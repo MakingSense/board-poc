@@ -39,9 +39,10 @@ describe("Integration tests with one client", function(){
   var server: ServerMock;
   var boardService: BoardService;
   var client: App;
+  var serverModel: model.Board = {};
   beforeEach(function(){
     client = new App(new BoardVM());
-    boardService = new BoardService();
+    boardService = new BoardService(serverModel);
     server = new ServerMock(boardService);
     server.addClient(client);
   });
@@ -152,6 +153,7 @@ describe("Integration tests with one client", function(){
       boardService.onTic();
 
       expect(noteVM.content()).toEqual("B");
+      expect(serverModel.notes[noteVM.id].content).toEqual("B");
     });
 });
 
