@@ -52,7 +52,6 @@ export class App {
     rfc6902.applyPatch(this.shadow, utils.clone(shadowDifferences));
     rfc6902.applyPatch(current, utils.clone(shadowDifferences));
     this.boardVM.update(current);
-    this.shadow = this.boardVM.toPlain();
   }
 
   initializateShadow = (board: model.Board) => {
